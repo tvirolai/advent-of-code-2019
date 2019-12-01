@@ -1,12 +1,14 @@
 (ns advent-of-code-2019.day01
-  (:require [clojure.string :as s]))
+  (:require [clojure.java.io :as io]))
 
 (def data
-  (let [lines (-> "./data/day01.txt" slurp (s/split #"\n"))]
-    (map #(Integer/parseInt %) lines)))
+  (with-open [rdr (io/reader "./data/day01.txt")]
+    (->> (line-seq rdr)
+         doall
+         (map #(Integer/parseInt %)))))
 
 (defn count-fuel [mass]
-  (- (Math/floor (/ mass 3)) 2))
+  (int (- (Math/floor (/ mass 3)) 2)))
 
 (defn part-1 []
   (reduce + (map count-fuel data)))
@@ -15,8 +17,7 @@
   (->> (iterate count-fuel mass)
        rest
        (take-while (complement neg?))
-       (reduce +)
-       int))
+       (reduce +)))
 
 (defn part-2 []
   (transduce (map total-fuel) + data))
